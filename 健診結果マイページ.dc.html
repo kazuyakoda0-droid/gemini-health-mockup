@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+::-webkit-scrollbar{height:10px;width:10px;}
+::-webkit-scrollbar-thumb{background:#c7d4dd;border-radius:6px;}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;font-family:'Noto Sans JP',sans-serif;background:#eef3f6;color:#233040;-webkit-font-smoothing:antialiased;">
+
+  <!-- ===================== LOGIN ===================== -->
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;display:flex;align-items:stretch;min-height:100vh;">
+      <div style="flex:1;display:none;"></div>
+      <div style="width:520px;background:linear-gradient(160deg,#15589c 0%,#0e7c86 100%);color:#fff;display:flex;flex-direction:column;justify-content:center;padding:64px 56px;">
+        <div style="font-size:13px;letter-spacing:.18em;opacity:.85;margin-bottom:14px;">HEALTH CHECKUP PORTAL</div>
+        <div style="font-size:34px;font-weight:700;line-height:1.5;margin-bottom:20px;">あなたの人間ドック、<br>毎年の変化を一目で。</div>
+        <div style="font-size:15px;line-height:2;opacity:.92;font-weight:400;max-width:360px;">過去の検査データをグラフで振り返り、医師・管理栄養士の知見にもとづく生活習慣アドバイスをお届けします。継続受診で、健康の小さな変化を早めにキャッチ。</div>
+        <div style="margin-top:48px;display:flex;gap:28px;">
+          <div><div style="font-size:30px;font-weight:700;"><span style="margin-left: 3px;">10</span><span style="font-size: 15px; font-weight: 500; margin-left: 3px;">年分</span></div><div style="font-size:12px;opacity:.8;margin-top:2px;">経年データを蓄積</div></div>
+          <div style="width:1px;background:rgba(255,255,255,.28);"></div>
+          <div><div style="font-size:30px;font-weight:700;">80<span style="font-size:15px;font-weight:500;margin-left:3px;">項目+</span></div><div style="font-size:12px;opacity:.8;margin-top:2px;">検査結果を管理</div></div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:48px;">
+        <div style="width:100%;max-width:380px;">
+          <img src="assets/logo.png" alt="広島県環境保健協会" style="height:46px;width:auto;margin-bottom:32px;">
+          <div style="font-size:22px;font-weight:700;margin-bottom:6px;">マイページ ログイン</div>
+          <div style="font-size:13px;color:#5f7183;margin-bottom:28px;">会員番号とパスワードを入力してください。</div>
+          <label style="display:block;font-size:13px;font-weight:500;margin-bottom:7px;">会員番号 / ID</label>
+          <input value="{{ idVal }}" onChange="{{ onId }}" placeholder="H-200431" style="width:100%;height:46px;border:1px solid #cdd9e1;border-radius:8px;padding:0 14px;font-size:15px;font-family:inherit;margin-bottom:18px;outline:none;background:#fff;" style-focus="border-color:#15589c;box-shadow:0 0 0 3px rgba(21,88,156,.12);">
+          <label style="display:block;font-size:13px;font-weight:500;margin-bottom:7px;">パスワード</label>
+          <input type="password" value="{{ pwVal }}" onChange="{{ onPw }}" placeholder="••••••••" style="width:100%;height:46px;border:1px solid #cdd9e1;border-radius:8px;padding:0 14px;font-size:15px;font-family:inherit;margin-bottom:10px;outline:none;background:#fff;" style-focus="border-color:#15589c;box-shadow:0 0 0 3px rgba(21,88,156,.12);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+            <label style="font-size:13px;color:#5f7183;display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" style="accent-color:#15589c;"> ログイン状態を保持</label>
+            <span style="font-size:13px;color:#15589c;cursor:pointer;">パスワードをお忘れですか？</span>
+          </div>
+          <button onClick="{{ doLogin }}" style="width:100%;height:50px;background:#15589c;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:.05em;" style-hover="background:#124a85;">ログイン</button>
+          <div style="margin-top:18px;font-size:12px;color:#8497a6;text-align:center;line-height:1.7;background:#f3f7fa;border:1px dashed #cdd9e1;border-radius:8px;padding:10px;">デモ：そのまま「ログイン」を押すとマイページに進みます</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== APP ===================== -->
+  <sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;flex:1;">
+
+      <!-- HEADER -->
+      <header style="position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid #e1eaf0;box-shadow:0 1px 3px rgba(20,50,80,.04);">
+        <div style="max-width:1200px;margin:0 auto;padding:0 28px;height:64px;display:flex;align-items:center;gap:28px;">
+          <img src="assets/logo.png" alt="広島県環境保健協会" style="height:34px;width:auto;">
+          <nav style="display:flex;gap:4px;margin-left:8px;">
+            <sc-for list="{{ navItems }}" as="nav" hint-placeholder-count="4">
+              <button onClick="{{ nav.onClick }}" style="{{ nav.style }}" style-hover="background:#eef3f6;">{{ nav.label }}</button>
+            </sc-for>
+          </nav>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:16px;">
+            <div style="text-align:right;line-height:1.3;">
+              <div style="font-size:14px;font-weight:700;">{{ persona.name }} 様</div>
+              <div style="font-size:11px;color:#8497a6;">会員番号 {{ persona.id }}</div>
+            </div>
+            <div style="width:38px;height:38px;border-radius:50%;background:#15589c;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;">{{ persona.initial }}</div>
+            <button onClick="{{ doLogout }}" style="font-size:12px;color:#5f7183;background:none;border:1px solid #d6e0e7;border-radius:6px;padding:7px 12px;cursor:pointer;font-family:inherit;" style-hover="background:#f3f7fa;">ログアウト</button>
+          </div>
+        </div>
+      </header>
+
+      <main style="flex:1;max-width:1200px;width:100%;margin:0 auto;padding:28px;">
+
+        <!-- ============ DASHBOARD ============ -->
+        <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+          <div data-screen-label="マイページ">
+            <!-- greeting + layout switch -->
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:22px;">
+              <div>
+                <div style="font-size:13px;color:#5f7183;">こんにちは、{{ persona.name }} 様</div>
+                <div style="font-size:26px;font-weight:700;margin-top:2px;">健康マイページ</div>
+                <div style="font-size:13px;color:#5f7183;margin-top:4px;">最新の受診日：<b style="color:#233040;">{{ latestDate }}</b>（{{ persona.visits }}回目の受診）</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:12px;color:#8497a6;">レイアウト案</span>
+                <div style="display:flex;background:#e3ecf2;border-radius:9px;padding:3px;">
+                  <sc-for list="{{ layoutTabs }}" as="lt" hint-placeholder-count="3">
+                    <button onClick="{{ lt.onClick }}" style="{{ lt.style }}">{{ lt.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <!-- ===== LAYOUT A : 標準ダッシュボード ===== -->
+            <sc-if value="{{ isLayoutA }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="display:flex;gap:18px;flex-wrap:wrap;background:#fff;border:1px solid #e1eaf0;border-radius:14px;padding:22px 24px;margin-bottom:24px;">
+                  <div style="display:flex;align-items:center;gap:18px;padding-right:24px;border-right:1px solid #eef3f6;">
+                    {{ scoreRing }}
+                    <div>
+                      <div style="font-size:12px;color:#8497a6;">総合健康スコア</div>
+                      <div style="font-size:13px;color:#5f7183;margin-top:2px;">前年 {{ scorePrev }}点 → <b style="color:#d83a2c;">{{ scoreDelta }}</b></div>
+                      <div style="margin-top:10px;display:inline-flex;align-items:center;gap:7px;background:{{ overall.bg }};color:{{ overall.color }};font-weight:700;font-size:13px;border-radius:20px;padding:6px 13px;">総合判定 {{ overall.grade }}・{{ overall.label }}</div>
+                    </div>
+                  </div>
+                  <div style="flex:1;min-width:260px;display:flex;align-items:center;gap:28px;">
+                    <sc-for list="{{ tallyCards }}" as="t" hint-placeholder-count="3">
+                      <div style="text-align:center;">
+                        <div style="font-size:30px;font-weight:700;color:{{ t.color }};">{{ t.count }}</div>
+                        <div style="font-size:12px;color:#5f7183;margin-top:2px;">{{ t.label }}</div>
+                      </div>
+                    </sc-for>
+                    <div style="flex:1;font-size:13px;line-height:1.9;color:#5f7183;border-left:1px solid #eef3f6;padding-left:24px;">体重・血糖・脂質・肝機能に経年の上昇傾向がみられます。<b style="color:#233040;">今が生活習慣を見直す好機</b>です。下のアドバイスをご確認ください。</div>
+                  </div>
+                </div>
+
+                <div style="font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;">注目の検査項目 <span style="font-size:12px;font-weight:400;color:#8497a6;">（カードをクリックすると経年グラフを表示）</span></div>
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px;">
+                  <sc-for list="{{ keyCards }}" as="m" hint-placeholder-count="8">
+                    <div onClick="{{ m.onClick }}" style="background:#fff;border:1px solid #e1eaf0;border-radius:13px;padding:16px 16px 14px;cursor:pointer;transition:box-shadow .15s,transform .15s;" style-hover="box-shadow:0 6px 18px rgba(20,50,80,.10);transform:translateY(-2px);">
+                      <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <span style="font-size:13px;font-weight:500;color:#5f7183;">{{ m.label }}</span>
+                        <span style="font-size:11px;font-weight:700;color:{{ m.statusColor }};background:{{ m.statusBg }};border-radius:11px;padding:3px 9px;">{{ m.statusLabel }}</span>
+                      </div>
+                      <div style="display:flex;align-items:baseline;gap:5px;margin-top:8px;">
+                        <span style="font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;">{{ m.latest }}</span>
+                        <span style="font-size:12px;color:#8497a6;">{{ m.unit }}</span>
+                        <span style="margin-left:auto;font-size:12px;font-weight:700;color:{{ m.deltaColor }};">{{ m.deltaText }}</span>
+                      </div>
+                      <div style="margin-top:6px;">{{ m.spark }}</div>
+                      <div style="font-size:11px;color:#9bacba;margin-top:4px;">基準値 {{ m.ref }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;align-items:start;">
+                  <div>
+                    <div style="font-size:16px;font-weight:700;margin-bottom:14px;">あなたへの生活習慣アドバイス</div>
+                    <div style="display:flex;flex-direction:column;gap:14px;">
+                      <sc-for list="{{ adviceTop }}" as="a" hint-placeholder-count="3">
+                        <div style="background:#fff;border:1px solid #e1eaf0;border-radius:13px;padding:18px 20px;">
+                          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                            <span style="font-size:11px;font-weight:700;color:{{ a.tagColor }};background:{{ a.tagBg }};border-radius:6px;padding:4px 9px;">{{ a.tag }}</span>
+                            <span style="font-size:15px;font-weight:700;">{{ a.title }}</span>
+                          </div>
+                          <div style="font-size:13px;color:#5f7183;line-height:1.7;margin-bottom:12px;">{{ a.finding }}</div>
+                          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                            <div style="background:#f3f8f4;border-radius:9px;padding:12px 14px;">
+                              <div style="font-size:12px;font-weight:700;color:#2f9e44;margin-bottom:6px;">🍴 食事のポイント</div>
+                              <ul style="margin:0;padding-left:16px;font-size:12.5px;line-height:1.85;color:#3a4b59;">
+                                <sc-for list="{{ a.meals }}" as="x" hint-placeholder-count="3"><li>{{ x }}</li></sc-for>
+                              </ul>
+                            </div>
+                            <div style="background:#f1f6fa;border-radius:9px;padding:12px 14px;">
+                              <div style="font-size:12px;font-weight:700;color:#15589c;margin-bottom:6px;">🏃 運動のポイント</div>
+                              <ul style="margin:0;padding-left:16px;font-size:12.5px;line-height:1.85;color:#3a4b59;">
+                                <sc-for list="{{ a.moves }}" as="y" hint-placeholder-count="2"><li>{{ y }}</li></sc-for>
+                              </ul>
+                            </div>
+                          </div>
+                          <div style="font-size:11px;color:#9bacba;margin-top:10px;">監修：{{ a.author }}</div>
+                        </div>
+                      </sc-for>
+                      <button onClick="{{ goAdvice }}" style="align-self:flex-start;font-size:13px;font-weight:700;color:#15589c;background:#fff;border:1px solid #c5d6e3;border-radius:8px;padding:11px 18px;cursor:pointer;font-family:inherit;" style-hover="background:#f3f7fa;">すべてのアドバイスを見る →</button>
+                    </div>
+                  </div>
+                  <div style="position:sticky;top:84px;">
+                    {{ reservationCard }}
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- ===== LAYOUT B : アラート重視 ===== -->
+            <sc-if value="{{ isLayoutB }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="display:grid;grid-template-columns:300px 1fr;gap:20px;margin-bottom:24px;align-items:stretch;">
+                  <div style="background:linear-gradient(160deg,#15589c,#0e7c86);color:#fff;border-radius:14px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+                    {{ scoreRingLight }}
+                    <div style="font-size:13px;opacity:.9;margin-top:10px;">総合健康スコア（前年 {{ scorePrev }}点）</div>
+                    <div style="margin-top:12px;background:rgba(255,255,255,.16);border-radius:20px;padding:7px 16px;font-weight:700;font-size:14px;">総合判定 {{ overall.grade }}・{{ overall.label }}</div>
+                  </div>
+                  <div style="background:#fff;border:1px solid #e1eaf0;border-radius:14px;padding:20px 22px;">
+                    <div style="font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:50%;background:#d83a2c;display:inline-block;"></span>今年の要注意ポイント</div>
+                    <div style="display:flex;flex-direction:column;gap:10px;">
+                      <sc-for list="{{ alertRows }}" as="m" hint-placeholder-count="5">
+                        <div onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:14px;padding:11px 12px;border-radius:10px;background:#f7fafc;cursor:pointer;" style-hover="background:#eef3f6;">
+                          <span style="font-size:11px;font-weight:700;color:{{ m.statusColor }};background:{{ m.statusBg }};border-radius:6px;padding:4px 9px;min-width:54px;text-align:center;">{{ m.statusLabel }}</span>
+                          <span style="font-size:13.5px;font-weight:500;width:130px;">{{ m.label }}</span>
+                          <div style="flex:1;">{{ m.bar }}</div>
+                          <span style="font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;width:62px;text-align:right;">{{ m.latest }}<span style="font-size:11px;color:#8497a6;font-weight:500;margin-left:2px;">{{ m.unit }}</span></span>
+                          <span style="font-size:12px;font-weight:700;color:{{ m.deltaColor }};width:54px;text-align:right;">{{ m.deltaText }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;">
+                  <sc-for list="{{ keyCards }}" as="m" hint-placeholder-count="8">
+                    <div onClick="{{ m.onClick }}" style="background:#fff;border:1px solid #e1eaf0;border-radius:11px;padding:13px 14px;cursor:pointer;display:flex;align-items:center;gap:12px;" style-hover="box-shadow:0 5px 14px rgba(20,50,80,.09);">
+                      <div style="flex:1;min-width:0;">
+                        <div style="font-size:12px;color:#5f7183;">{{ m.label }}</div>
+                        <div style="font-size:21px;font-weight:700;font-variant-numeric:tabular-nums;">{{ m.latest }}<span style="font-size:11px;color:#9bacba;font-weight:500;margin-left:2px;">{{ m.unit }}</span></div>
+                      </div>
+                      <span style="width:9px;height:9px;border-radius:50%;background:{{ m.statusColor }};flex:none;"></span>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;align-items:start;">
+                  <div>
+                    <div style="font-size:16px;font-weight:700;margin-bottom:14px;">あなたへの生活習慣アドバイス</div>
+                    <div style="display:flex;flex-direction:column;gap:14px;">
+                      <sc-for list="{{ adviceTop }}" as="a" hint-placeholder-count="3">
+                        <div style="background:#fff;border:1px solid #e1eaf0;border-radius:13px;padding:18px 20px;display:flex;gap:16px;">
+                          <div style="width:5px;border-radius:3px;background:{{ a.tagColor }};flex:none;"></div>
+                          <div style="flex:1;">
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><span style="font-size:11px;font-weight:700;color:{{ a.tagColor }};">{{ a.tag }}</span><span style="font-size:15px;font-weight:700;">{{ a.title }}</span></div>
+                            <div style="font-size:13px;color:#5f7183;line-height:1.7;margin-bottom:10px;">{{ a.finding }}</div>
+                            <div style="font-size:12.5px;color:#3a4b59;line-height:1.9;"><b style="color:#2f9e44;">食事</b>　{{ a.mealsLine }}<br><b style="color:#15589c;">運動</b>　{{ a.movesLine }}</div>
+                          </div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                  <div style="position:sticky;top:84px;">{{ reservationCard }}</div>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- ===== LAYOUT C : トレンド重視 ===== -->
+            <sc-if value="{{ isLayoutC }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;grid-template-columns:240px 1fr 300px;gap:20px;align-items:start;">
+                <div style="background:#fff;border:1px solid #e1eaf0;border-radius:14px;padding:14px;">
+                  <div style="font-size:13px;font-weight:700;color:#5f7183;padding:4px 8px 12px;">検査項目を選ぶ</div>
+                  <div style="display:flex;flex-direction:column;gap:4px;">
+                    <sc-for list="{{ metricList }}" as="m" hint-placeholder-count="8">
+                      <button onClick="{{ m.onPick }}" style="{{ m.pickStyle }}">
+                        <span style="width:8px;height:8px;border-radius:50%;background:{{ m.statusColor }};flex:none;"></span>
+                        <span style="flex:1;text-align:left;font-size:13px;">{{ m.label }}</span>
+                        <span style="font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;">{{ m.latest }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div style="background:#fff;border:1px solid #e1eaf0;border-radius:14px;padding:22px 24px;">
+                  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;">
+                    <div>
+                      <div style="font-size:18px;font-weight:700;">{{ bigMetric.label }} の経年推移</div>
+                      <div style="font-size:12px;color:#8497a6;margin-top:3px;">基準値 {{ bigMetric.ref }} ／ 単位 {{ bigMetric.unitFull }}</div>
+                    </div>
+                    <div style="text-align:right;">
+                      <div style="font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ bigMetric.statusColor }};">{{ bigMetric.latest }}<span style="font-size:13px;color:#9bacba;font-weight:500;margin-left:3px;">{{ bigMetric.unit }}</span></div>
+                      <div style="font-size:12px;font-weight:700;color:{{ bigMetric.statusColor }};">{{ bigMetric.statusLabel }}・前年比 {{ bigMetric.deltaText }}</div>
+                    </div>
+                  </div>
+                  {{ bigChart }}
+                  <div style="display:flex;gap:18px;margin-top:14px;font-size:11.5px;color:#5f7183;">
+                    <span style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:10px;background:#eaf6ee;border-radius:2px;"></span>正常域</span>
+                    <span style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:10px;background:#fdf3e2;border-radius:2px;"></span>要注意域</span>
+                    <span style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:10px;background:#fbecea;border-radius:2px;"></span>異常域</span>
+                  </div>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:16px;">
+                  <div style="background:#fff;border:1px solid #e1eaf0;border-radius:14px;padding:18px 20px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span style="font-size:11px;font-weight:700;color:{{ adviceTop.0.tagColor }};background:{{ adviceTop.0.tagBg }};border-radius:6px;padding:4px 9px;">{{ adviceTop.0.tag }}</span><span style="font-size:14px;font-weight:700;">{{ adviceTop.0.title }}</span></div>
+                    <div style="font-size:12.5px;color:#5f7183;line-height:1.7;margin-bottom:10px;">{{ adviceTop.0.finding }}</div>
+                    <div style="font-size:12px;color:#3a4b59;line-height:1.85;"><b style="color:#2f9e44;">食事</b>　{{ adviceTop.0.mealsLine }}<br><b style="color:#15589c;">運動</b>　{{ adviceTop.0.movesLine }}</div>
+                    <button onClick="{{ goAdvice }}" style="margin-top:12px;font-size:12px;font-weight:700;color:#15589c;background:none;border:none;cursor:pointer;font-family:inherit;padding:0;">すべてのアドバイスを見る →</button>
+                  </div>
+                  {{ reservationCard }}
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- ============ TREND ============ -->
+        <sc-if value="{{ isTrend }}" hint-placeholder-val="{{ true }}">
+          <div data-screen-label="経年トレンド">
+            <div style="font-size:26px;font-weight:700;margin-bottom:4px;">経年トレンド</div>
+            <div style="font-size:13px;color:#5f7183;margin-bottom:22px;">基準値ゾーン（<b style="color:#2f9e44;">正常</b>／<b style="color:#e08600;">要注意</b>／<b style="color:#d83a2c;">異常</b>）を背景の色帯で表示しています。</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;">
+              <sc-for list="{{ metricChips }}" as="m" hint-placeholder-count="8">
+                <button onClick="{{ m.onPick }}" style="{{ m.chipStyle }}">{{ m.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;">
+              <div style="background:#fff;border:1px solid #e1eaf0;border-radius:14px;padding:24px;">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+                  <div>
+                    <div style="font-size:19px;font-weight:700;">{{ bigMetric.label }}</div>
+                    <div style="font-size:12px;color:#8497a6;margin-top:3px;">基準値 {{ bigMetric.ref }} ／ 単位 {{ bigMetric.unitFull }}</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ bigMetric.statusColor }};">{{ bigMetric.latest }}<span style="font-size:13px;color:#9bacba;font-weight:500;margin-left:3px;">{{ bigMetric.unit }}</span></div>
+                    <div style="font-size:12px;font-weight:700;color:{{ bigMetric.statusColor }};">{{ bigMetric.statusLabel }}・前年比 {{ bigMetric.deltaText }}</div>
+                  </div>
+                </div>
+                {{ bigChart }}
+                <div style="display:flex;gap:18px;margin-top:14px;font-size:11.5px;color:#5f7183;">
+                  <span style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:10px;background:#eaf6ee;border-radius:2px;"></span>正常域</span>
+                  <span style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:10px;background:#fdf3e2;border-radius:2px;"></span>要注意域</span>
+                  <span style="display:flex;align-items:center;gap:6px;"><span style="width:14px;height:10px;background:#fbecea;border-radius:2px;"></span>異常域</span>
+                </div>
+              </div>
+              <div style="background:#fff;border:1px solid #e1eaf0;border-radius:14px;padding:20px 22px;">
+                <div style="font-size:14px;font-weight:700;margin-bottom:12px;">年次データ</div>
+                <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                  <sc-for list="{{ bigMetric.tableRows }}" as="r" hint-placeholder-count="5">
+                    <tr style="border-bottom:1px solid #eef3f6;">
+                      <td style="padding:9px 0;color:#5f7183;">{{ r.year }}</td>
+                      <td style="padding:9px 0;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;">{{ r.val }}</td>
+                      <td style="padding:9px 0;text-align:right;width:64px;"><span style="font-size:11px;font-weight:700;color:{{ r.color }};background:{{ r.bg }};border-radius:10px;padding:3px 8px;">{{ r.label }}</span></td>
+                    </tr>
+                  </sc-for>
+                </table>
+                <div style="margin-top:16px;font-size:12px;color:#5f7183;line-height:1.8;background:#f7fafc;border-radius:9px;padding:12px 14px;">{{ bigMetric.comment }}</div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ============ ITEMS ============ -->
+        <sc-if value="{{ isItems }}" hint-placeholder-val="{{ true }}">
+          <div data-screen-label="検査結果一覧">
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px;">
+              <div>
+                <div style="font-size:26px;font-weight:700;">検査結果一覧</div>
+                <div style="font-size:13px;color:#5f7183;margin-top:4px;">直近5年分・全項目をカテゴリ別に表示。見出しをクリックで開閉できます。</div>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button onClick="{{ openAllCats }}" style="font-size:12px;color:#15589c;background:#fff;border:1px solid #c5d6e3;border-radius:7px;padding:8px 12px;cursor:pointer;font-family:inherit;" style-hover="background:#f3f7fa;">すべて開く</button>
+                <button onClick="{{ closeAllCats }}" style="font-size:12px;color:#5f7183;background:#fff;border:1px solid #d6e0e7;border-radius:7px;padding:8px 12px;cursor:pointer;font-family:inherit;" style-hover="background:#f3f7fa;">すべて閉じる</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:18px;font-size:12px;color:#5f7183;margin-bottom:18px;">
+              <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#2f9e44;"></span>A 異常なし</span>
+              <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#e08600;"></span>B 軽度異常</span>
+              <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:#d83a2c;"></span>C 要医療</span>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <sc-for list="{{ catView }}" as="cat" hint-placeholder-count="6">
+                <div style="background:#fff;border:1px solid #e1eaf0;border-radius:13px;overflow:hidden;">
+                  <button onClick="{{ cat.onToggle }}" style="width:100%;display:flex;align-items:center;gap:12px;padding:16px 20px;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left;" style-hover="background:#f7fafc;">
+                    <span style="font-size:16px;font-weight:700;color:#233040;">{{ cat.name }}</span>
+                    <span style="font-size:12px;color:#8497a6;">{{ cat.countLabel }}</span>
+                    <span style="font-size:11px;font-weight:700;color:{{ cat.worstColor }};background:{{ cat.worstBg }};border-radius:11px;padding:3px 10px;">{{ cat.worstLabel }}</span>
+                    <span style="margin-left:auto;font-size:13px;color:#8497a6;transform:{{ cat.caret }};transition:transform .15s;">▼</span>
+                  </button>
+                  <sc-if value="{{ cat.open }}" hint-placeholder-val="{{ true }}">
+                    <div style="overflow-x:auto;border-top:1px solid #eef3f6;">
+                      <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:680px;">
+                        <thead>
+                          <tr style="background:#f7fafc;">
+                            <th style="text-align:left;padding:10px 20px;font-weight:700;color:#5f7183;font-size:12px;">検査項目</th>
+                            <th style="text-align:left;padding:10px 8px;font-weight:500;color:#9bacba;font-size:12px;">基準値</th>
+                            <sc-for list="{{ years }}" as="y" hint-placeholder-count="5">
+                              <th style="text-align:right;padding:10px 12px;font-weight:700;color:#5f7183;font-size:12px;">{{ y }}</th>
+                            </sc-for>
+                            <th style="text-align:center;padding:10px 16px;font-weight:700;color:#5f7183;font-size:12px;">判定</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <sc-for list="{{ cat.rows }}" as="r" hint-placeholder-count="4">
+                            <tr style="border-top:1px solid #f1f5f8;">
+                              <td style="padding:11px 20px;font-weight:500;">{{ r.n }}<span style="font-size:11px;color:#9bacba;font-weight:400;margin-left:5px;">{{ r.u }}</span></td>
+                              <td style="padding:11px 8px;color:#9bacba;font-size:12px;white-space:nowrap;">{{ r.ref }}</td>
+                              <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="5">
+                                <td style="{{ c.style }}">{{ c.v }}</td>
+                              </sc-for>
+                              <td style="padding:11px 16px;text-align:center;"><span style="font-size:11px;font-weight:700;color:{{ r.jColor }};background:{{ r.jBg }};border-radius:10px;padding:3px 9px;">{{ r.j }}</span></td>
+                            </tr>
+                          </sc-for>
+                        </tbody>
+                      </table>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ============ ADVICE ============ -->
+        <sc-if value="{{ isAdvice }}" hint-placeholder-val="{{ true }}">
+          <div data-screen-label="生活習慣アドバイス">
+            <div style="font-size:26px;font-weight:700;margin-bottom:4px;">生活習慣アドバイス</div>
+            <div style="font-size:13px;color:#5f7183;margin-bottom:22px;">当会の医師・管理栄養士が、あなたの5年間のデータをもとに作成した改善プランです。</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+              <sc-for list="{{ adviceAll }}" as="a" hint-placeholder-count="4">
+                <div style="background:#fff;border:1px solid #e1eaf0;border-radius:14px;padding:22px 24px;">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <span style="font-size:11px;font-weight:700;color:{{ a.tagColor }};background:{{ a.tagBg }};border-radius:6px;padding:4px 10px;">{{ a.tag }}</span>
+                    <span style="font-size:17px;font-weight:700;">{{ a.title }}</span>
+                  </div>
+                  <div style="font-size:13px;color:#5f7183;line-height:1.7;margin-bottom:16px;background:#f7fafc;border-radius:9px;padding:12px 14px;">📊 {{ a.finding }}</div>
+                  <div style="margin-bottom:14px;">
+                    <div style="font-size:13px;font-weight:700;color:#2f9e44;margin-bottom:7px;">🍴 食事のアドバイス</div>
+                    <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.95;color:#3a4b59;">
+                      <sc-for list="{{ a.meals }}" as="x" hint-placeholder-count="3"><li>{{ x }}</li></sc-for>
+                    </ul>
+                  </div>
+                  <div style="margin-bottom:14px;">
+                    <div style="font-size:13px;font-weight:700;color:#15589c;margin-bottom:7px;">🏃 運動のアドバイス</div>
+                    <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.95;color:#3a4b59;">
+                      <sc-for list="{{ a.moves }}" as="y" hint-placeholder-count="2"><li>{{ y }}</li></sc-for>
+                    </ul>
+                  </div>
+                  <div style="font-size:11px;color:#9bacba;border-top:1px solid #eef3f6;padding-top:10px;">監修：{{ a.author }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:22px;">{{ reservationCard }}</div>
+          </div>
+        </sc-if>
+
+      </main>
+    </div>
+  </sc-if>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer style="background:#fff;border-top:1px solid #e1eaf0;margin-top:auto;">
+    <div style="max-width:1200px;margin:0 auto;padding:22px 28px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+      <img src="assets/logo.png" alt="一般財団法人 広島県環境保健協会" style="height:38px;width:auto;">
+      <div style="font-size:11px;color:#8497a6;line-height:1.7;">〒734-0007 広島市南区皆実町一丁目6-29　TEL 082-255-7110<br>本サイトは人間ドック受診者向けの健康管理ポータル（デモ）です。</div>
+      <div style="margin-left:auto;font-size:11px;color:#9bacba;">© 一般財団法人 広島県環境保健協会</div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { screen:'login', layout:'A', metric:'BMI', open:{}, id:'', pw:'' };
+
+  years = ['2021','2022','2023','2024','2025'];
+
+  persona = { name:'田中 健一', initial:'田', id:'H-200431', age:52, sex:'男性', visits:5 };
+
+  metricsDef = {
+    'BMI':       { label:'BMI', unit:'', unitFull:'kg/m²', ref:'18.5–25.0', series:[23.9,24.5,25.1,25.6,26.1], yMin:22, yMax:28, lo:18.5, hi:25, clo:17, chi:27, comment:'5年連続で上昇。標準体重(約62kg)を3〜4kg上回っています。まずは現状維持→緩やかな減量を目標に。' },
+    '腹囲':       { label:'腹囲', unit:'cm', unitFull:'cm', ref:'< 85 (男性)', series:[84,86,88,90,92], yMin:80, yMax:96, lo:null, hi:85, clo:null, chi:90, comment:'内臓脂肪型肥満の目安(85cm)を超えています。腹囲はメタボリックシンドロームの重要指標です。' },
+    '血圧高':     { label:'収縮期血圧', unit:'mmHg', unitFull:'mmHg', ref:'< 130', series:[124,128,132,135,138], yMin:115, yMax:145, lo:null, hi:130, clo:null, chi:140, comment:'高値が続いています。減塩(1日6g未満)と適正体重の維持で改善が期待できます。' },
+    'LDL':       { label:'LDLコレステロール', unit:'mg/dL', unitFull:'mg/dL', ref:'60–119', series:[118,125,132,140,148], yMin:95, yMax:155, lo:60, hi:119, clo:null, chi:140, comment:'いわゆる悪玉。動脈硬化のリスク因子で、140を超えると医療機関での相談が推奨されます。' },
+    'HbA1c':     { label:'HbA1c', unit:'%', unitFull:'%(NGSP)', ref:'< 5.6', series:[5.4,5.6,5.8,6.0,6.2], yMin:5.2, yMax:6.6, lo:null, hi:5.6, clo:null, chi:6.5, comment:'過去1〜2ヶ月の血糖の平均。6.0%以上は糖尿病予備群。早めの生活改善が肝心です。' },
+    '中性脂肪':   { label:'中性脂肪', unit:'mg/dL', unitFull:'mg/dL', ref:'30–149', series:[110,125,140,158,172], yMin:95, yMax:185, lo:30, hi:149, clo:null, chi:200, comment:'食事(糖質・アルコール)の影響を受けやすい項目。HDLとあわせて脂質バランスの確認を。' },
+    '空腹時血糖': { label:'空腹時血糖', unit:'mg/dL', unitFull:'mg/dL', ref:'70–99', series:[96,100,104,108,112], yMin:90, yMax:120, lo:70, hi:99, clo:null, chi:126, comment:'100〜125は正常高値〜境界域。HbA1cと一緒に推移を追っていきましょう。' },
+    'γ-GTP':     { label:'γ-GTP', unit:'U/L', unitFull:'U/L', ref:'13–64', series:[42,55,68,82,95], yMin:30, yMax:100, lo:null, hi:64, clo:null, chi:80, comment:'飲酒や脂肪肝で上昇しやすい肝機能の指標。腹部エコーの脂肪肝所見ともよく一致します。' }
+  };
+  metricOrder = ['BMI','腹囲','血圧高','LDL','HbA1c','中性脂肪','空腹時血糖','γ-GTP'];
+
+  advice = [
+    { tag:'代謝・肥満', tagColor:'#15589c', tagBg:'#e8f0f8', title:'体重と内臓脂肪を落とす', finding:'5年で体重+6.1kg・腹囲+8cm。内臓脂肪型の傾向で、血糖・血圧・脂質の上昇とも関連しています。',
+      meals:['夕食の主食(ごはん)を普段の半分量に','揚げ物・脂身の多い肉は週2回まで','野菜・海藻・きのこを毎食1皿先に食べる'],
+      moves:['1日合計30分の早歩き(週150分が目安)','エレベーターより階段を選ぶ'], author:'管理栄養士 山田 / 担当医 佐藤' },
+    { tag:'糖代謝', tagColor:'#e08600', tagBg:'#fdf3e2', title:'血糖・HbA1cを上げない', finding:'HbA1cが5.4→6.2%に上昇し、糖尿病予備群の段階です。今の改善が将来の発症予防に直結します。',
+      meals:['食べる順番は 野菜→主菜→主食','甘い飲料・間食は1日1回までに','よく噛んで20分以上かけて食べる'],
+      moves:['食後30分以内に15分の歩行','週2回の軽い筋トレで糖の消費を促す'], author:'管理栄養士 山田' },
+    { tag:'脂質', tagColor:'#0e7c86', tagBg:'#e2f1f2', title:'動脈硬化を防ぐ', finding:'LDL 148・中性脂肪 172mg/dL。血管へのダメージが蓄積しやすい状態です。',
+      meals:['青魚(さば・いわし)を週3回','バター・脂身など飽和脂肪酸を控える','大豆製品・オリーブオイルを活用'],
+      moves:['有酸素運動でHDL(善玉)を増やす','禁煙・受動喫煙を避ける'], author:'担当医 佐藤' },
+    { tag:'肝機能・飲酒', tagColor:'#d83a2c', tagBg:'#fbecea', title:'肝臓を休ませる', finding:'γ-GTP 42→95U/L、腹部エコーで脂肪肝の所見。飲酒量と体重の見直しが効果的です。',
+      meals:['週2日は休肝日を設ける','飲酒は日本酒1合(ビール500ml)まで','締めのラーメン・甘いものを控える'],
+      moves:['体重を3%減らすと脂肪肝が改善しやすい','水分をこまめに摂る'], author:'管理栄養士 山田 / 担当医 佐藤' }
+  ];
+
+  categories = this.buildCategories();
+
+  buildCategories(){
+    const C = x => [x,x,x,x,x];
+    return [
+      { name:'身体計測', rows:[
+        { n:'身長', u:'cm', ref:'—', vals:C(168.5), j:'A' },
+        { n:'体重', u:'kg', ref:'—', vals:[68.0,69.5,71.2,72.8,74.1], j:'B' },
+        { n:'腹囲', u:'cm', ref:'<85', vals:[84,86,88,90,92], j:'C' },
+        { n:'BMI', u:'', ref:'18.5–25', vals:[23.9,24.5,25.1,25.6,26.1], j:'B' },
+        { n:'肥満度', u:'%', ref:'±10', vals:[8.8,11.2,13.9,16.4,18.6], j:'B' },
+        { n:'体脂肪率', u:'%', ref:'10–25', vals:[22.5,23.4,24.6,25.3,26.2], j:'B' } ]},
+      { name:'血圧', rows:[
+        { n:'血圧（収縮期）', u:'mmHg', ref:'<130', vals:[124,128,132,135,138], j:'B' },
+        { n:'血圧（拡張期）', u:'mmHg', ref:'<85', vals:[78,80,82,84,86], j:'B' } ]},
+      { name:'脂質', rows:[
+        { n:'総コレステロール', u:'mg/dL', ref:'140–219', vals:[198,205,212,220,228], j:'B' },
+        { n:'LDLコレステロール', u:'mg/dL', ref:'60–119', vals:[118,125,132,140,148], j:'C' },
+        { n:'HDLコレステロール', u:'mg/dL', ref:'≥40', vals:[58,56,54,52,50], j:'A' },
+        { n:'空腹時中性脂肪', u:'mg/dL', ref:'30–149', vals:[110,125,140,158,172], j:'B' } ]},
+      { name:'糖代謝', rows:[
+        { n:'空腹時血糖', u:'mg/dL', ref:'70–99', vals:[96,100,104,108,112], j:'B' },
+        { n:'HbA1c', u:'%', ref:'<5.6', vals:[5.4,5.6,5.8,6.0,6.2], j:'B' },
+        { n:'尿糖', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(±)','(+)'], j:'B' } ]},
+      { name:'尿酸・腎機能', rows:[
+        { n:'尿酸', u:'mg/dL', ref:'3.7–7.0', vals:[6.2,6.5,6.8,7.1,7.4], j:'B' },
+        { n:'クレアチニン', u:'mg/dL', ref:'0.61–1.04', vals:[0.82,0.84,0.86,0.88,0.90], j:'A' },
+        { n:'尿素窒素', u:'mg/dL', ref:'8–20', vals:[13.5,14.0,14.5,15.0,15.5], j:'A' },
+        { n:'eGFR', u:'', ref:'≥60', vals:[82,80,78,76,74], j:'A' } ]},
+      { name:'電解質', rows:[
+        { n:'カルシウム', u:'mg/dL', ref:'8.5–10.2', vals:C(9.4), j:'A' },
+        { n:'ナトリウム', u:'mEq/L', ref:'138–145', vals:C(141), j:'A' },
+        { n:'カリウム', u:'mEq/L', ref:'3.5–5.0', vals:C(4.2), j:'A' },
+        { n:'クロール', u:'mEq/L', ref:'101–108', vals:C(103), j:'A' } ]},
+      { name:'眼科（視力・眼圧・眼底）', rows:[
+        { n:'視力 右', u:'', ref:'—', vals:[1.2,1.2,1.0,1.0,0.9], j:'A' },
+        { n:'視力 左', u:'', ref:'—', vals:[1.2,1.0,1.0,0.9,0.9], j:'A' },
+        { n:'眼圧 右', u:'mmHg', ref:'10–21', vals:[14,14,15,15,16], j:'A' },
+        { n:'眼圧 左', u:'mmHg', ref:'10–21', vals:[14,15,15,16,16], j:'A' },
+        { n:'眼底 H', u:'', ref:'0', vals:['0','0','0','1','1'], j:'B' },
+        { n:'眼底 S', u:'', ref:'0', vals:['0','0','1','1','1'], j:'B' },
+        { n:'眼底 DM', u:'', ref:'0', vals:['0','0','0','0','0'], j:'A' } ]},
+      { name:'聴力', rows:[
+        { n:'1000Hz 右', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(-)','(-)'], j:'A' },
+        { n:'1000Hz 左', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(-)','(-)'], j:'A' },
+        { n:'4000Hz 右', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(±)','(+)'], j:'B' },
+        { n:'4000Hz 左', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(-)','(±)'], j:'B' } ]},
+      { name:'尿一般', rows:[
+        { n:'白血球', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(-)','(-)'], j:'A' },
+        { n:'蛋白', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(±)','(±)'], j:'A' },
+        { n:'潜血', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(-)','(-)'], j:'A' },
+        { n:'ウロビリノーゲン', u:'', ref:'(±)', vals:['(±)','(±)','(±)','(±)','(±)'], j:'A' },
+        { n:'尿比重', u:'', ref:'1.005–1.030', vals:[1.020,1.018,1.022,1.020,1.021], j:'A' },
+        { n:'尿pH', u:'', ref:'5.0–7.5', vals:[6.0,6.0,5.5,6.0,5.5], j:'A' },
+        { n:'尿ケトン', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(-)','(-)'], j:'A' },
+        { n:'尿沈渣 赤血球', u:'/HPF', ref:'<5', vals:['1','1','1','2','1'], j:'A' },
+        { n:'尿沈渣 白血球', u:'/HPF', ref:'<5', vals:['1','2','1','1','2'], j:'A' },
+        { n:'尿沈渣 扁平上皮', u:'/HPF', ref:'少数', vals:['少数','少数','少数','少数','少数'], j:'A' } ]},
+      { name:'血液一般', rows:[
+        { n:'赤血球', u:'×10⁴/µL', ref:'400–539', vals:[482,478,475,472,470], j:'A' },
+        { n:'ヘモグロビン', u:'g/dL', ref:'13.1–16.6', vals:[15.2,15.0,14.9,14.8,14.7], j:'A' },
+        { n:'ヘマトクリット', u:'%', ref:'38.5–48.9', vals:[45.0,44.5,44.0,44.0,43.8], j:'A' },
+        { n:'MCV', u:'fL', ref:'83–101', vals:[92,92,93,93,93], j:'A' },
+        { n:'MCH', u:'pg', ref:'28.2–34.7', vals:C(31), j:'A' },
+        { n:'MCHC', u:'%', ref:'31.7–35.3', vals:[33.5,33.6,33.5,33.6,33.5], j:'A' },
+        { n:'血小板数', u:'×10⁴/µL', ref:'15.8–34.8', vals:[24,23,23,22,22], j:'A' },
+        { n:'白血球数', u:'/µL', ref:'3300–8600', vals:[6200,6400,6600,6800,7100], j:'A' } ]},
+      { name:'肝機能', rows:[
+        { n:'GOT (AST)', u:'U/L', ref:'13–30', vals:[24,26,28,30,33], j:'B' },
+        { n:'GPT (ALT)', u:'U/L', ref:'10–42', vals:[28,32,38,45,52], j:'C' },
+        { n:'γ-GTP', u:'U/L', ref:'13–64', vals:[42,55,68,82,95], j:'C' },
+        { n:'ALP (IFCC)', u:'U/L', ref:'38–113', vals:[68,70,72,74,76], j:'A' },
+        { n:'LDH (LD)', u:'U/L', ref:'124–222', vals:[185,188,190,192,195], j:'A' },
+        { n:'ZTT', u:'U', ref:'2–12', vals:[8.5,8.8,9.0,9.2,9.5], j:'A' },
+        { n:'TTT', u:'U', ref:'0–4', vals:[2.5,2.8,3.0,3.2,3.5], j:'A' },
+        { n:'Ch-E（コリンエステラーゼ）', u:'U/L', ref:'240–486', vals:[320,330,340,350,360], j:'A' },
+        { n:'LAP', u:'U/L', ref:'35–73', vals:[55,56,57,58,59], j:'A' },
+        { n:'総ビリルビン', u:'mg/dL', ref:'0.4–1.5', vals:[0.8,0.9,0.8,0.9,1.0], j:'A' },
+        { n:'総蛋白', u:'g/dL', ref:'6.6–8.1', vals:[7.2,7.3,7.2,7.3,7.4], j:'A' },
+        { n:'アルブミン', u:'g/dL', ref:'4.1–5.1', vals:[4.5,4.4,4.5,4.4,4.5], j:'A' },
+        { n:'A/G比', u:'', ref:'1.32–2.23', vals:[1.6,1.6,1.6,1.5,1.5], j:'A' } ]},
+      { name:'肝炎・感染症', rows:[
+        { n:'HBs抗原', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(-)','(-)'], j:'A' },
+        { n:'HBs抗体', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(-)','(-)'], j:'A' },
+        { n:'HCV抗体', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(-)','(-)'], j:'A' },
+        { n:'HCV PCR定量', u:'', ref:'未実施', vals:['—','—','—','—','—'], j:'A' },
+        { n:'血清アミラーゼ', u:'U/L', ref:'44–132', vals:[78,80,82,80,82], j:'A' } ]},
+      { name:'炎症・その他', rows:[
+        { n:'FIB-4 index', u:'', ref:'<1.30', vals:[1.10,1.20,1.30,1.45,1.60], j:'B' },
+        { n:'CRP定性', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(-)','(-)'], j:'A' },
+        { n:'CRP定量', u:'mg/dL', ref:'≤0.14', vals:[0.05,0.06,0.07,0.08,0.09], j:'A' } ]},
+      { name:'呼吸器・画像・生理', rows:[
+        { n:'胸部X線', u:'', ref:'異常なし', vals:['異常なし','異常なし','異常なし','異常なし','異常なし'], j:'A' },
+        { n:'肺活量', u:'mL', ref:'—', vals:[4200,4150,4100,4050,4000], j:'A' },
+        { n:'予測肺活量', u:'mL', ref:'—', vals:[4120,4110,4100,4090,4080], j:'A' },
+        { n:'努力性肺活量', u:'mL', ref:'—', vals:[4150,4120,4090,4060,4030], j:'A' },
+        { n:'1秒量', u:'mL', ref:'—', vals:[3320,3290,3260,3220,3180], j:'A' },
+        { n:'%肺活量', u:'%', ref:'≥80', vals:[102,101,100,99,98], j:'A' },
+        { n:'1秒率', u:'%', ref:'≥70', vals:[80,79,79,78,78], j:'A' },
+        { n:'%1秒量', u:'%', ref:'≥80', vals:[97,96,95,94,93], j:'A' },
+        { n:'腹部X線', u:'', ref:'異常なし', vals:['異常なし','異常なし','異常なし','異常なし','異常なし'], j:'A' },
+        { n:'心電図', u:'', ref:'正常', vals:['正常','正常','正常','軽度異常','軽度異常'], j:'B' },
+        { n:'心拍数', u:'bpm', ref:'60–100', vals:[68,70,72,72,74], j:'A' },
+        { n:'胃部X線', u:'', ref:'異常なし', vals:['異常なし','異常なし','要経過観察','異常なし','異常なし'], j:'A' },
+        { n:'大腸（便潜血）', u:'', ref:'(-)', vals:['(-)','(-)','(-)','(-)','(+)'], j:'C' },
+        { n:'腹部超音波', u:'', ref:'異常なし', vals:['異常なし','異常なし','脂肪肝疑い','脂肪肝','脂肪肝'], j:'B' } ]},
+      { name:'白血球分画', rows:[
+        { n:'NEUT（好中球）', u:'%', ref:'40–74', vals:[55,56,57,58,58], j:'A' },
+        { n:'St（桿状核球）', u:'%', ref:'2–13', vals:[3,3,2,3,2], j:'A' },
+        { n:'Seg（分葉核球）', u:'%', ref:'38–74', vals:[52,53,55,55,56], j:'A' },
+        { n:'LYMP（リンパ球）', u:'%', ref:'18–49', vals:[35,34,33,32,32], j:'A' },
+        { n:'MONO（単球）', u:'%', ref:'2–10', vals:[6,6,6,5,6], j:'A' },
+        { n:'EOS（好酸球）', u:'%', ref:'0–8', vals:[2.5,2.0,2.5,3.0,2.5], j:'A' },
+        { n:'BASO（好塩基球）', u:'%', ref:'0–2', vals:[0.5,0.5,0.5,0.4,0.5], j:'A' },
+        { n:'他（異型リンパ球等）', u:'', ref:'—', vals:['—','—','—','—','—'], j:'A' } ]}
+    ];
+  }
+
+  // ----- helpers -----
+  stColor(s){ return s==='normal' ? '#2f9e44' : s==='caution' ? '#e08600' : '#d83a2c'; }
+  stBg(s){ return s==='normal' ? '#eaf6ee' : s==='caution' ? '#fdf3e2' : '#fbecea'; }
+  stLabel(s){ return s==='normal' ? '正常' : s==='caution' ? '要注意' : '異常'; }
+  statusOf(m,v){
+    const overHi = m.hi!=null && v>m.hi;
+    const underLo = m.lo!=null && v<m.lo;
+    if(!overHi && !underLo) return 'normal';
+    if(overHi) return (m.chi!=null && v<=m.chi) ? 'caution' : 'abnormal';
+    return (m.clo!=null && v>=m.clo) ? 'caution' : 'abnormal';
+  }
+  jMeta(j){
+    if(j==='A') return { c:'#2f9e44', bg:'#eaf6ee', t:'異常なし' };
+    if(j==='B') return { c:'#e08600', bg:'#fdf3e2', t:'軽度異常' };
+    return { c:'#d83a2c', bg:'#fbecea', t:'要医療' };
+  }
+  worstOf(rows){ const o={A:0,B:1,C:2,D:2}; let w='A'; rows.forEach(r=>{ if((o[r.j]||0)>(o[w]||0)) w=r.j; }); return w; }
+
+  bands(m){
+    const {yMin,yMax,lo,hi,clo,chi}=m; const a=[];
+    const nLo = lo==null?yMin:lo, nHi = hi==null?yMax:hi;
+    a.push({from:Math.max(nLo,yMin),to:Math.min(nHi,yMax),c:'#eaf6ee'});
+    if(hi!=null){ const top=chi==null?yMax:Math.min(chi,yMax); if(top>hi) a.push({from:hi,to:top,c:'#fdf3e2'}); }
+    if(lo!=null){ const bot=clo==null?yMin:Math.max(clo,yMin); if(bot<lo) a.push({from:bot,to:lo,c:'#fdf3e2'}); }
+    if(hi!=null){ const top=chi==null?yMax:Math.min(chi,yMax); if(yMax>top) a.push({from:top,to:yMax,c:'#fbecea'}); }
+    if(lo!=null){ const bot=clo==null?yMin:Math.max(clo,yMin); if(yMin<bot) a.push({from:yMin,to:bot,c:'#fbecea'}); }
+    return a;
+  }
+
+  chart(m, opt){
+    const e=React.createElement;
+    const w=opt.w, h=opt.h, big=!!opt.big;
+    const padL=big?40:4, padR=big?16:4, padT=big?22:8, padB=big?26:6;
+    const plotW=w-padL-padR, plotH=h-padT-padB;
+    const n=m.series.length;
+    const X=i=> padL + (n<=1?0:i*plotW/(n-1));
+    const Y=v=> padT + (1-(v-m.yMin)/(m.yMax-m.yMin))*plotH;
+    const kids=[];
+    this.bands(m).forEach((b,i)=>{ const y1=Y(b.to), y2=Y(b.from); kids.push(e('rect',{key:'b'+i,x:padL,y:y1,width:plotW,height:Math.max(0,y2-y1),fill:b.c})); });
+    if(big){
+      kids.push(e('line',{key:'ax',x1:padL,y1:padT,x2:padL,y2:padT+plotH,stroke:'#dde6ec',strokeWidth:1}));
+      kids.push(e('text',{key:'ymax',x:padL-7,y:padT+4,fontSize:11,fill:'#9bacba',textAnchor:'end'},String(m.yMax)));
+      kids.push(e('text',{key:'ymin',x:padL-7,y:padT+plotH,fontSize:11,fill:'#9bacba',textAnchor:'end'},String(m.yMin)));
+    }
+    const pts=m.series.map((v,i)=>X(i)+','+Y(v)).join(' ');
+    kids.push(e('polyline',{key:'ln',points:pts,fill:'none',stroke:'#15589c',strokeWidth:big?2.6:1.9,strokeLinejoin:'round',strokeLinecap:'round'}));
+    m.series.forEach((v,i)=>{
+      const st=this.statusOf(m,v), col=this.stColor(st), last=i===n-1;
+      kids.push(e('circle',{key:'d'+i,cx:X(i),cy:Y(v),r:last?(big?5:3.4):(big?3.6:2.4),fill:'#fff',stroke:col,strokeWidth:big?2.6:1.9}));
+      if(big){
+        kids.push(e('text',{key:'vl'+i,x:X(i),y:Y(v)-11,fontSize:12,fontWeight:700,fill:'#233040',textAnchor:'middle'},String(v)));
+        kids.push(e('text',{key:'yr'+i,x:X(i),y:h-7,fontSize:12,fill:'#5f7183',textAnchor:'middle'},this.years[i]));
+      }
+    });
+    return e('svg',{viewBox:'0 0 '+w+' '+h,width:big?'100%':w,height:h,preserveAspectRatio:big?'none':'xMidYMid meet',style:{display:'block'}},kids);
+  }
+
+  miniBar(m,v){
+    const e=React.createElement;
+    const w=120,h=8;
+    const frac=Math.max(0,Math.min(1,(v-m.yMin)/(m.yMax-m.yMin)));
+    const kids=[];
+    this.bands(m).forEach((b,i)=>{ const x1=w*Math.max(0,Math.min(1,(b.from-m.yMin)/(m.yMax-m.yMin))); const x2=w*Math.max(0,Math.min(1,(b.to-m.yMin)/(m.yMax-m.yMin))); kids.push(e('rect',{key:i,x:x1,y:0,width:Math.max(0,x2-x1),height:h,fill:b.c})); });
+    const col=this.stColor(this.statusOf(m,v));
+    kids.push(e('circle',{key:'k',cx:w*frac,cy:h/2,r:5,fill:'#fff',stroke:col,strokeWidth:2.4}));
+    return e('svg',{viewBox:'0 0 '+w+' '+h,width:'100%',height:h,preserveAspectRatio:'none',style:{display:'block',borderRadius:4,overflow:'hidden'}},kids);
+  }
+
+  scoreRing(score, light){
+    const e=React.createElement;
+    const sz=light?96:88, r=light?40:38, cx=sz/2, cy=sz/2;
+    const circ=2*Math.PI*r;
+    const col = score>=80?'#2f9e44':score>=60?'#f0a500':'#d83a2c';
+    const track = light?'rgba(255,255,255,.25)':'#eef3f6';
+    const num = light?'#fff':col;
+    const sub = light?'rgba(255,255,255,.85)':'#9bacba';
+    const kids=[
+      e('circle',{key:'t',cx,cy,r,fill:'none',stroke:track,strokeWidth:9}),
+      e('circle',{key:'p',cx,cy,r,fill:'none',stroke:light?'#fff':col,strokeWidth:9,strokeLinecap:'round',strokeDasharray:circ,strokeDashoffset:circ*(1-score/100),transform:'rotate(-90 '+cx+' '+cy+')'}),
+      e('text',{key:'n',x:cx,y:cy+2,fontSize:light?28:26,fontWeight:700,fill:num,textAnchor:'middle'},String(score)),
+      e('text',{key:'s',x:cx,y:cy+18,fontSize:11,fill:sub,textAnchor:'middle'},'点 / 100')
+    ];
+    return e('svg',{viewBox:'0 0 '+sz+' '+sz,width:sz,height:sz},kids);
+  }
+
+  // ----- actions -----
+  go(s){ this.setState({screen:s}); window.scrollTo&&window.scrollTo(0,0); }
+  pick(id){ this.setState({metric:id,screen:'trend'}); window.scrollTo&&window.scrollTo(0,0); }
+  pickInline(id){ this.setState({metric:id}); }
+  toggle(name){ this.setState(s=>({open:{...s.open,[name]:!s.open[name]}})); }
+
+  renderVals(){
+    const S=this.state, mo=this.metricOrder, md=this.metricsDef;
+    const score=62, scorePrev=70;
+    const overall={ grade:'C', label:'生活改善・要再検査', color:'#e08600', bg:'#fdf3e2' };
+
+    // tallies from all categories
+    let tA=0,tB=0,tC=0;
+    this.categories.forEach(c=>c.rows.forEach(r=>{ if(r.j==='A')tA++; else if(r.j==='B')tB++; else tC++; }));
+
+    const key = mo.map(id=>{
+      const m=md[id]; const last=m.series[m.series.length-1], prev=m.series[m.series.length-2];
+      const st=this.statusOf(m,last); const diff=Math.round((last-prev)*100)/100;
+      const up=diff>0; const deltaText=(up?'▲ +':diff<0?'▼ ':'± ')+(diff===0?'0':Math.abs(diff));
+      return {
+        id, label:m.label, unit:m.unit, ref:m.ref, latest:last, unitFull:m.unitFull,
+        statusLabel:this.stLabel(st), statusColor:this.stColor(st), statusBg:this.stBg(st),
+        deltaText, deltaColor: up?'#d83a2c':diff<0?'#2f9e44':'#9bacba',
+        spark:this.chart(m,{w:170,h:46}), bar:this.miniBar(m,last),
+        onClick:()=>this.pick(id), onPick:()=>this.pickInline(id)
+      };
+    });
+    const alertRows = key.filter(k=>k.statusLabel!=='正常');
+
+    // big metric (trend page / layout C)
+    const bm=md[S.metric]||md['BMI'];
+    const bmLast=bm.series[bm.series.length-1], bmPrev=bm.series[bm.series.length-2];
+    const bmDiff=Math.round((bmLast-bmPrev)*100)/100;
+    const bmSt=this.statusOf(bm,bmLast);
+    const bigMetric={
+      label:bm.label, unit:bm.unit, unitFull:bm.unitFull, ref:bm.ref, latest:bmLast,
+      statusLabel:this.stLabel(bmSt), statusColor:this.stColor(bmSt),
+      deltaText:(bmDiff>0?'+':'')+bmDiff, comment:bm.comment,
+      tableRows: bm.series.map((v,i)=>{ const st=this.statusOf(bm,v); return { year:this.years[i]+'年', val:v, label:this.stLabel(st), color:this.stColor(st), bg:this.stBg(st) }; })
+    };
+
+    // nav
+    const mkNav=(s,label)=>({ label, onClick:()=>this.go(s), style:'font-size:14px;font-weight:'+(S.screen===s?'700':'500')+';color:'+(S.screen===s?'#15589c':'#5f7183')+';background:'+(S.screen===s?'#eaf1f8':'transparent')+';border:none;border-radius:8px;padding:9px 15px;cursor:pointer;font-family:inherit;' });
+    const navItems=[ mkNav('dashboard','マイページ'), mkNav('trend','経年トレンド'), mkNav('items','検査結果一覧'), mkNav('advice','生活習慣アドバイス') ];
+
+    // layout tabs
+    const mkTab=(k,label)=>({ label, onClick:()=>this.setState({layout:k}), style:'font-size:12px;font-weight:700;border:none;border-radius:7px;padding:7px 13px;cursor:pointer;font-family:inherit;background:'+(S.layout===k?'#fff':'transparent')+';color:'+(S.layout===k?'#15589c':'#5f7183')+';box-shadow:'+(S.layout===k?'0 1px 3px rgba(20,50,80,.12)':'none')+';' });
+    const layoutTabs=[ mkTab('A','A 標準'), mkTab('B','B アラート'), mkTab('C','C トレンド') ];
+
+    // metric list (layout C) + chips (trend)
+    const metricList = mo.map(id=>{ const m=md[id], last=m.series[m.series.length-1], st=this.statusOf(m,last); const active=S.metric===id;
+      return { label:m.label, latest:last, statusColor:this.stColor(st), onPick:()=>this.pickInline(id),
+        pickStyle:'display:flex;align-items:center;gap:9px;width:100%;border:none;border-radius:9px;padding:10px 11px;cursor:pointer;font-family:inherit;background:'+(active?'#eaf1f8':'transparent')+';color:'+(active?'#15589c':'#3a4b59')+';font-weight:'+(active?'700':'500')+';' }; });
+    const metricChips = mo.map(id=>{ const m=md[id]; const active=S.metric===id;
+      return { label:m.label, onPick:()=>this.pickInline(id),
+        chipStyle:'font-size:13px;font-weight:'+(active?'700':'500')+';border:1px solid '+(active?'#15589c':'#d6e0e7')+';background:'+(active?'#15589c':'#fff')+';color:'+(active?'#fff':'#5f7183')+';border-radius:20px;padding:9px 16px;cursor:pointer;font-family:inherit;' }; });
+
+    // categories view
+    const catView=this.categories.map(c=>{
+      const open = S.open[c.name]!==undefined ? S.open[c.name] : false;
+      const worst=this.worstOf(c.rows); const wm=this.jMeta(worst);
+      return { name:c.name, open, onToggle:()=>this.toggle(c.name),
+        countLabel:'('+c.rows.length+'項目)', caret: open?'rotate(180deg)':'rotate(0deg)',
+        worstLabel:'最大判定 '+worst, worstColor:wm.c, worstBg:wm.bg,
+        rows:c.rows.map(r=>{ const jm=this.jMeta(r.j); const lastIdx=r.vals.length-1;
+          return { n:r.n, u:r.u, ref:r.ref, j:r.j, jColor:jm.c, jBg:jm.bg,
+            cells:r.vals.map((v,i)=>({ v, style:'padding:11px 12px;text-align:right;font-variant-numeric:tabular-nums;'+(i===lastIdx?'font-weight:700;color:#233040;':'color:#6b7c8a;') })) }; })
+      };
+    });
+
+    const advice=this.advice.map(a=>({ ...a, mealsLine:a.meals.join('／'), movesLine:a.moves.join('／') }));
+
+    const reservationCard = React.createElement('div',{style:{background:'linear-gradient(160deg,#15589c,#0e7c86)',color:'#fff',borderRadius:14,padding:'22px 22px'}},[
+      React.createElement('div',{key:1,style:{fontSize:13,opacity:.9}},'前回受診日 2025年4月12日'),
+      React.createElement('div',{key:2,style:{fontSize:19,fontWeight:700,marginTop:6,lineHeight:1.5}},'次回の人間ドックを予約しましょう'),
+      React.createElement('div',{key:3,style:{fontSize:12.5,opacity:.92,lineHeight:1.8,marginTop:8}},'継続して受診することで、数値の変化を早期にキャッチできます。今年の改善の成果も来年の結果で確認できます。'),
+      React.createElement('button',{key:4,onClick:()=>{},style:{marginTop:16,width:'100%',height:46,background:'#fff',color:'#15589c',border:'none',borderRadius:9,fontSize:15,fontWeight:700,fontFamily:'inherit',cursor:'pointer'}},'受診予約に進む →'),
+      React.createElement('div',{key:5,style:{fontSize:11,opacity:.8,marginTop:10,textAlign:'center'}},'お電話でのご予約：082-255-7110')
+    ]);
+
+    return {
+      isLogin:S.screen==='login', isApp:S.screen!=='login',
+      isDash:S.screen==='dashboard', isTrend:S.screen==='trend', isItems:S.screen==='items', isAdvice:S.screen==='advice',
+      isLayoutA:S.layout==='A', isLayoutB:S.layout==='B', isLayoutC:S.layout==='C',
+      persona:this.persona, latestDate:'2025年4月12日',
+      score, scorePrev, scoreDelta:'-8点', overall,
+      scoreRing:this.scoreRing(score,false), scoreRingLight:this.scoreRing(score,true),
+      tallyCards:[ {count:tA,label:'異常なし (A)',color:'#2f9e44'}, {count:tB,label:'軽度異常 (B)',color:'#e08600'}, {count:tC,label:'要医療 (C)',color:'#d83a2c'} ],
+      keyCards:key, alertRows, metricList, metricChips, bigMetric, bigChart:this.chart(bm,{w:760,h:300,big:true}),
+      navItems, layoutTabs, years:this.years, catView,
+      adviceTop:advice.slice(0,3), adviceAll:advice, reservationCard,
+      idVal:S.id, pwVal:S.pw, onId:e=>this.setState({id:e.target.value}), onPw:e=>this.setState({pw:e.target.value}),
+      doLogin:()=>this.go('dashboard'), doLogout:()=>this.setState({screen:'login',id:'',pw:''}),
+      goAdvice:()=>this.go('advice'),
+      openAllCats:()=>{ const o={}; this.categories.forEach(c=>o[c.name]=true); this.setState({open:o}); },
+      closeAllCats:()=>{ const o={}; this.categories.forEach(c=>o[c.name]=false); this.setState({open:o}); }
+    };
+  }
+}
+</script>
+</body>
+</html>
